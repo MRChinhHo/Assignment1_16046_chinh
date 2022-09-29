@@ -1,0 +1,87 @@
+////////////////////
+file storage
+'use strict';
+// thêm được animation khi click vào sidebar
+const navEl = document.getElementById('sidebar');
+// bắt sực kiện click vào nó
+navEl.addEventListener('click', function () {
+    //khi kich vào nếu có lass'active' thì tiên hành xóa, và ngược lại  
+    this.classList.toggle('active');
+
+});
+
+// dữ liêu thu cưng mặt định để test.
+
+// const data1 = {
+//     id: 'P001',
+//     Name: 'Tom',
+//     type: 'Dog',
+//     age: 3,
+//     weight: 5,
+//     length: 50,
+//     color: 'red',
+//     breed: 'Tabby',
+//     vaccinated: true,
+//     dewormend: true,
+//     sterilized: true,
+
+
+// };
+
+// const data2 = {
+//     id: 'P002',
+//     Name: 'Taddy',
+//     age: 3,
+//     type: 'Dog',
+//     weight: 5,
+//     length: 40,
+//     color: 'green',
+//     breed: 'Mixed Breed',
+//     vaccinated: true,
+//     dewormend: true,
+//     sterilized: true,
+
+
+// };
+// dữ liệu breed cho sẳn để test chức năng khỏi cần nhập bạn đầu
+const breed1 = {
+    breed1: 'Mixed Breed',
+    type: 'Dog',
+};
+const breed2 = {
+    breed1: 'Taddy',
+    type: 'Cat',
+};
+const breed3 = {
+    breed1: 'Chó cỏ',
+    type: 'Dog',
+};
+const breed4 = {
+    breed1: 'Mun',
+    type: 'Cat',
+};
+// lấy dữ liệu petArr
+if (!getFromStorage('petArr')) {
+    //gán dữ liệu để test
+    saveToStorage('petArr', [data1, data2]);
+}
+// let petArr = getFromStorage('petArr') || []
+// petArr.push(data1, data2)
+// saveToStorage('petArr', petArr)
+// lấy dữ liệu breedArr
+const petArr = getFromStorage('petArr');
+if (!getFromStorage('breedArr')) {
+    //gán dữ liệu để test
+    saveToStorage('breedArr', [breed1, breed2, breed3, breed4]);
+}
+const breedArr = getFromStorage('breedArr');
+//ham láy dữ liệu
+function getFromStorage(key) {
+    //JSON.parse(localStorage.getItem(key)); giải mã từ sping vè dạng oject ban đầu
+    return JSON.parse(localStorage.getItem(key));
+}
+// ham luu du lieu
+function saveToStorage(key, value) {
+    //JSON.stringify(value) ma hoa du lieu ve dang ban dau
+    localStorage.setItem(key, JSON.stringify(value));
+}

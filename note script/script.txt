@@ -1,0 +1,277 @@
+'use script'
+
+
+//lay ten
+const submitBtn = document.getElementById("submit-btn");
+const idInput = document.getElementById("input-id");
+const nameInput = document.getElementById("input-name");
+const ageInput = document.getElementById("input-age");
+const typeInput = document.getElementById("input-type");
+const weightInput = document.getElementById("input-weight");
+const lengthInput = document.getElementById("input-length");
+const colorInput = document.getElementById("input-color-1");
+const breedInput = document.getElementById("input-breed");
+const vaccinatedInput = document.getElementById("input-vaccinated");
+const dewormedInput = document.getElementById("input-dewormed");
+const sterilizedInput = document.getElementById("input-sterilized");
+
+const tableBodyEl = document.getElementById('tbody');
+const healthyBtn = document.getElementById('healthy-btn');
+let deleteElList = document.querySelectorAll('.btn.btn-danger');
+//khai báo biến time
+const dateEl = new Date();
+const day = dateEl.getDate();
+const month = dateEl.getMonth() + 1;
+const year = dateEl.getFullYear();
+//petArr = [];
+const data1 = {
+    id: 'P001',
+    Name: 'Tom',
+    age: 3,
+    type: 'cat',
+    weight: 5,
+    length: 50,
+    color: 'red',
+    breed: 'Tabby',
+    vaccinated: true,
+    dewormend: true,
+    sterilized: true,
+    date: new Date(2022, 6, 5),
+}
+
+const data2 = {
+    id: 'P002',
+    Name: 'cat',
+    age: 3,
+    type: 'cat',
+    weight: 5,
+    length: 40,
+    color: 'green',
+    breed: 'Mixed Breed',
+    vaccinated: true,
+    dewormend: true,
+    sterilized: true,
+
+};
+
+
+petArr.push(data1);
+petArr.push(data2);
+// láy giá trị của các thẻ
+submitBtn.addEventListener('click', function (e) {
+    const data = {
+        id: idInput.value,
+        name: nameInput.value,
+        age: parseInt(ageInput.value),
+        color: colorInput.value,
+        length: parseInt(lengthInput.value),
+        weight: parseInt(weightInput.value),
+        type: typeInput.value,
+        breed: breedInput.value,
+        vaccinated: vaccinatedInput.checked,
+        dewormend: dewormedInput.checked,
+        sterilized: sterilizedInput.checked,
+
+        //láy thời gian
+        date: day + '/' + month + '/' + year,
+    };
+    //console.log(data);
+
+    const validate = validateData(data);
+
+    if (validate) {
+        //them thu cung vao danh sach
+        petArr.push(data);
+        //hien thi thu cung
+        renderTableData(petArr);
+        //xoa du lieu trong form input
+        clearInput();
+    };
+
+
+});
+//hiển thị danh sách thú cưng trước đó
+renderTableData(petArr);
+
+// bắt sực kiện khi ấn chọn vào TypeInput hiển thi đúng loại giống Dog-cat
+typeInput.addEventListener('click', renderBreed);
+//hàm hiển thị các loại giống đúng với từng loại
+function renderBreed() {
+    breedInput.innerHTML = '<option>Select Breed</option>';
+    //Neu type la Dog
+    if (typeInput.value === 'Dog') {
+        //mảng chứa các loại giống Dogs
+        const breedDogs = breedArr.filter((breedItem) => breedItem.type === 'Dog')
+        breedDogs.forEach(function (breedItem) {
+            const option = document.createElement('option');
+            option.innerHTML = `${breedItem.breed}`; breedInput.appendChild(option);
+        });
+        //neu la Cat
+    } else if (typeInput.value === 'Cat') {
+        //mảng chứa các loại giống Cats
+        const breedCats = breedArr.filter((breedItem) => breedItem.type === 'Cat')
+        breedCats.forEach(function (breedItem) {
+            const option = document.createElement('option');
+            option.innerHTML = `${breedItem.breed}`; breedInput.appendChild(option);
+        });
+    }
+}
+function renderTableData(petArr) {
+    //code hien thi
+    tableBodyEl.innerHTML = '';
+
+    for (let i = 0; i < petArr.length; i++) {
+        const row = document.createElement('tr');// tao the tr
+        row.innerHTML = `
+        <th scope="row">${petArr[i].id}</th >
+        <td>${petArr[i].name}</td>
+        <td>${petArr[i].age}</td>
+        <td>${petArr[i].type}</td>
+        <td>${petArr[i].weight}kg</td>
+    <td>${petArr[i].lenght}cm</td>
+    <td>${petArr[i].breed}</td>
+    <td>
+        <i class="bi bi-square-fill" style="color: ${petArr[i].color}"></i>
+    </td>
+    <td><i class="bi ${petArr[i].vaccinated ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i ></td >
+    <td><i class="bi ${petArr[i].dewormend ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i></td>
+    <td><i class="bi  ${petArr[i].sterilized ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i></td>
+    <td>${petArr[i].date}</td>
+    <td><button class="btn btn-danger" onclick="deletePet('${petArr[i].id}')">Delete</button>
+    </td>`;
+        tableBodyEl.appendChild(row);
+    }
+}
+// hàm xóa 1 thú cưng id được truyền vào
+function deletePet(petId) {
+    const isDeleted = confirm('Are you sure?');
+    if (isDeleted) {
+        //thuc hien buoc xoa
+        for (let i = 0; i < petArr.length; i++) {
+            if (petId === petArr[i].id) {
+                //xoa khoi mang
+                petArr.splice(i, 1);
+                //cập nhập lại dữ liệu local storage
+                saveToStorage('petArr', petArr);
+                //gọi lại hàm hiển thị
+                renderTableData(petArr);
+                break;
+            }
+        }
+    }
+}
+
+function clearInput() {
+    idInput.value = '';
+    nameInput.value = '';
+    ageInput.value = '';
+    typeInput.value = 'Select Type';
+    weightInput.value = '';
+    lengthInput.value = '';
+    colorInput.value = '#000000';
+    breedInput.value = 'Select Breed';
+    vaccinatedInput.checked = false;
+    dewormedInput.checked = false;
+    sterilizedInput.checked = false;
+}
+//xử lý điều kiện
+const validateData = function (data) {
+
+    //khai báo cờ hiệu
+    let isValidate = true;
+
+    // data.id là 1 kiểu string nên dấu cách vẫn là 1 dữ liều vì vậy ta bỏ đi
+    // dùng data.id.trim() để loại bỏ dấu cách
+
+    if (data.id.trim() === '') {
+        alert('không được bỏ trống id !')
+        //gặp lỗi phải đươc trường hợp về false để xử lý
+        isValidate = false;
+    }
+    if (data.name.trim() === '') {
+        alert('không được bỏ trống name !')
+        isValidate = false;
+    }
+    if (data.type === '') {
+        alert('không được bỏ trống type !')
+        isValidate = false;
+    }
+    // giat trị age là số thì kiểu isNaN khong phải số là false và else
+    if (isNaN(data.age)) {
+        alert('không được bỏ trống age !')
+        isValidate = false;
+    }
+    if (isNaN(data.weight)) {
+        alert('không được bỏ trống weight !')
+        isValidate = false;
+    }
+    if (isNaN(data.length)) {
+        alert('không được bỏ trống leigth !')
+        isValidate = false;
+    }
+    for (let i = 0; i < petArr.length; i++) {
+        if (data.id === petArr[i].id) {
+            alert('ID must unique!');
+            isValidate = false;
+            break;
+        }
+    }
+    if (data.age < 1 || data.age > 15) {
+        alert('Age must be between 1 and 15!');
+        isValidate = false;
+
+    }
+    if (data.weight < 1 || data.weight > 15) {
+        alert('weight must be between 1 and 15!');
+        isValidate = false;
+
+    }
+    if (data.lenght < 1 || data.lenght > 100) {
+        alert('lenght must be between 1 and 15!');
+        isValidate = false;
+
+    }
+    if (data.type === 'Select Type') {
+        alert('Please select Type');
+        isValidate = false;
+    }
+    // if (data.breed === "Select Breed") {
+    //     alert('Please select Breed');
+    //     isValidate = false;
+    // }
+
+    return isValidate;
+};
+let healthyCheck = true;
+
+healthyBtn.addEventListener('click', function () {
+    if (healthyCheck === true) {
+        //hien thi thu cung khoe manh
+        const healthyPetArr = [];
+        //lap mang pet
+        for (let i = 0; i < petArr.length; i++) {
+            if (petArr[i].vaccinated && petArr[i].dewormend && petArr[i].sterilized) {
+                //them thu cung i vaof mang heakthyPetArr
+                healthyPetArr.push(petArr[i]);
+            }
+        }
+        //sau for se dduoc mot mang healthyPetArr: chua toan bo thu cung khoer manh
+        renderTableData(healthyPetArr);
+        //goi ham hien thi
+        //doi nut thanh nut 'show All pet'
+        healthyBtn.textContent = 'Show All Pet';
+        // doi lai bien co hieu
+        healthyCheck = false;
+    } else {
+        //hien thi taon bo thu cung
+        renderTableData(petArr);
+        //doi ten nut thanh...
+        healthyBtn.textContent = 'Show Healthy Pet';
+        healthyCheck = true;
+    }
+
+});
+
+
+
+
